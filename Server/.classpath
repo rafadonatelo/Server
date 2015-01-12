@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="src/lib/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="src/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="src/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="src/lib/javax.servlet-3.0.0.v201112011016.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-client-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-continuation-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-http-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-io-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-security-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-server-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-servlet-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-servlets-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-util-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-webapp-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-websocket-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/jetty-xml-8.1.2.v20120308.jar"/>
+	<classpathentry kind="lib" path="src/lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="src/lib/WebSocketRemote-0.0.12.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
