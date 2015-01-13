@@ -8,7 +8,7 @@ function sendMessage(data) {
 	webSocket.send(data.join(","));
 }
 
-function sendMessage(type, seq, data) {
+function sendMessage2(type, seq, data) {
 	webSocket.send([ type, seq, new Date().getTime(), data ].join('|'));
 }
 

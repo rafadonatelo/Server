@@ -348,7 +348,7 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 
 		robot.waitForIdle();
 		robot.mouseWheel(wheel);
-		robot.waitForIdle();
+		robot.waitForIdle( );
 
 	}
 
@@ -382,7 +382,7 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 		} else if (messageType.equals("mousedown")) {
 			onMouseDown(messageData);
 		} else if (messageType.equals("mouseup")) {
-			onKeyPress(messageData);
+			onMouseUp(messageData);
 		} else if (messageType.equals("mousewheel")) {
 			onMouseWheel(messageData);
 		} else if (messageType.equals("keydown")) {
