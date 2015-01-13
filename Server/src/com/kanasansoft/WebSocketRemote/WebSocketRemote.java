@@ -401,12 +401,15 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 
 	private void onKeyPress(String data) {
 		String[] messages = data.split(",");
+		System.out.println(data);		
 		try {
 			if (!messages[0].equals("main") && !messages[0].equals("contextmenu")) {
 				if (Integer.parseInt(data) == 13){
 					robot.keyPress(KeyEvent.VK_ENTER);
+					robot.keyRelease(KeyEvent.VK_ENTER);
 				}else{
 					robot.keyPress(Integer.parseInt(data));
+					robot.keyRelease(Integer.parseInt(data));
 				}	
 			}
 		} catch (Exception e) {

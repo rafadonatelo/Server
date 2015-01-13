@@ -24,7 +24,6 @@ function setImageRequestTimer(milliseconds) {
 
 function onKeyDownImage(eve) {
 	console.log(eve.keyCode); 
-	event.preventDefault();
 	sendMessage([ "keydown", eve.keyCode ]);
 }
 
