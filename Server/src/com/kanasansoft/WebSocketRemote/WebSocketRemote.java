@@ -13,6 +13,7 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
 
@@ -29,6 +30,7 @@ import org.kyotogtug.vnc.events.FileUploadEvent;
 public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 
 	Robot robot = new Robot();
+
 	ScreenData screenData = null;
 
 	public static void main(String[] args) {
@@ -52,10 +54,8 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 		PopupMenu popupMenu = new PopupMenu();
 		popupMenu.add(quitMenuItem);
 
-		URL imageUrl = this.getClass().getClassLoader()
-				.getResource("images/icon.png");
-		TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit()
-				.createImage(imageUrl));
+		URL imageUrl = this.getClass().getClassLoader().getResource("images/icon.png");
+		TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().createImage(imageUrl));
 		trayIcon.setImageAutoSize(true);
 		trayIcon.setToolTip("WebSocketRemote");
 		trayIcon.setPopupMenu(popupMenu);
@@ -93,15 +93,13 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 		WSServlet wsServlet = new WSServlet(this);
 		ServletHolder wsServletHolder = new ServletHolder(wsServlet);
 
-		wsServletHolder.setInitParameter("bufferSize",
-				Integer.toString(8192 * 256, 10));
-		
+		wsServletHolder.setInitParameter("bufferSize", Integer.toString(8192 * 256, 10));
+
 		ServletContextHandler wsServletContextHandler = new ServletContextHandler();
 		wsServletContextHandler.addServlet(wsServletHolder, "/ws/*");
 
 		HandlerList handlerList = new HandlerList();
-		handlerList.setHandlers(new Handler[] { resourceHandler,
-				wsServletContextHandler });
+		handlerList.setHandlers(new Handler[] { resourceHandler, wsServletContextHandler });
 		server.setHandler(handlerList);
 		server.start();
 		Capture capture = new Capture();
@@ -144,8 +142,7 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 			sendCount++;
 		}
 		byte[] messageType = "image".getBytes();
-		byte[] capturedDate = Long.toString(screenData.getDate().getTime(), 16)
-				.getBytes();
+		byte[] capturedDate = Long.toString(screenData.getDate().getTime(), 16).getBytes();
 		byte[] sequenceCount = Integer.toString(sendCount, 16).getBytes();
 		for (int i = 0; i < sendCount; i++) {
 			byte[] sequenceNumber = Integer.toString(i + 1, 16).getBytes();
@@ -153,8 +150,7 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 			int sendLength = sendSize < restLength ? sendSize : restLength;
 			byte[] imageData = new byte[sendLength];
 			System.arraycopy(base64, i * sendSize, imageData, 0, sendLength);
-			byte[] sendData = makeSendData(messageType, capturedDate,
-					sequenceNumber, sequenceCount, imageData);
+			byte[] sendData = makeSendData(messageType, capturedDate, sequenceNumber, sequenceCount, imageData);
 			try {
 				connection.sendMessage(new String(sendData));
 			} catch (IOException e) {
@@ -348,7 +344,7 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 
 		robot.waitForIdle();
 		robot.mouseWheel(wheel);
-		robot.waitForIdle( );
+		robot.waitForIdle();
 
 	}
 
@@ -386,11 +382,11 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 		} else if (messageType.equals("mousewheel")) {
 			onMouseWheel(messageData);
 		} else if (messageType.equals("keydown")) {
-			// onKeyDown(messageData);
+			onKeyPress(messageData);
 		} else if (messageType.equals("keyup")) {
 			// onMouseWheel(messageData);
 		} else if (messageType.equals("keypress")) {
-			onKeyPress(messageData);
+			// onKeyPress(messageData);j
 		} else if (data.split("\\|")[0].equals("FILE_UPLOAD")) {
 			Event event = new FileUploadEvent();
 			FileUploadEvent fileUploadEvent = (FileUploadEvent) event;
@@ -405,11 +401,18 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 
 	private void onKeyPress(String data) {
 		String[] messages = data.split(",");
-		if (!messages[0].equals("main") && !messages[0].equals("contextmenu")) {
-			robot.waitForIdle();
-			robot.keyPress(Integer.parseInt(messages[0]));
-			robot.waitForIdle();
+		try {
+			if (!messages[0].equals("main") && !messages[0].equals("contextmenu")) {
+				if (Integer.parseInt(data) == 13){
+					robot.keyPress(KeyEvent.VK_ENTER);
+				}else{
+					robot.keyPress(Integer.parseInt(data));
+				}	
+			}
+		} catch (Exception e) {
+			System.out.println("Tecla invalida "+data);
 		}
+		
 	}
 
 	@Override

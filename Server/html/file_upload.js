@@ -1,6 +1,6 @@
 function initFileUpload() {
 	console.log('initFileUp');
-	//var dest = document.getElementById("text");
+	//var dest = document.getElementById("remote");
 	//dest.addEventListener("dragover", onDragOver, false);
 	//dest.addEventListener("drop", onDrop, false);
 }

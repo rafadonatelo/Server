@@ -23,18 +23,20 @@ function setImageRequestTimer(milliseconds) {
 }
 
 function onKeyDownImage(eve) {
-	console.log(eve.keyCode); //
+	console.log(eve.keyCode); 
+	event.preventDefault();
 	sendMessage([ "keydown", eve.keyCode ]);
 }
 
 function onKeyUpImage(eve) {
-	// console.log(eve.keyCode);
-	// sendMessage([ "keyup" ]);
+	console.log(eve.keyCode);
+	sendMessage([ "keyup" ]);
 }
 
 function onKeyPressImage(eve) {
-	console.log(eve.charCode);
-	sendMessage([ "keypress", eve.keyCode ]);
+	//console.log(eve);
+	//event.preventDefault();
+	//sendMessage([ "keypress", eve.keyCode ]);
 }
 
 function onMouseMoveBrowser(eve) {

@@ -13,7 +13,6 @@ import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Date;
 
 import javax.imageio.ImageIO;
 
@@ -29,7 +28,7 @@ class Capture extends Thread {
 		try{
 			while(true){
 
-				long startTime = new Date().getTime();
+				//long startTime = new Date().getTime();
 
 				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 				GraphicsDevice[] gds = ge.getScreenDevices();
@@ -74,9 +73,9 @@ class Capture extends Thread {
 					count=size.length-1;
 				}
 
-				long endTime = new Date().getTime();
-
-				sleep(Math.max(Math.min((endTime-startTime)*2,1000),100));
+				//long endTime = new Date().getTime();
+				//System.out.println(Math.max(Math.min((endTime-startTime)*2,1000),100));
+				sleep(150);
 
 			}
 		} catch (AWTException e) {
