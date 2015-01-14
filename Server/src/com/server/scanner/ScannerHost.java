@@ -5,10 +5,31 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
+import oshi.SystemInfo;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.util.FormatUtil;
+
+/**
+ * 
+ * @author Rafael Gouveia da Silva
+ *
+ */
 public class ScannerHost {
+	static OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+
+	static SystemInfo si = new SystemInfo();
 
 	private final static String getHDSerial() throws IOException {
 		String os = System.getProperty("os.name");
@@ -230,64 +251,151 @@ public class ScannerHost {
 
 		return filtraString(result, "serial: ");
 	}
-	
-	public static void obterPropriedadesDoSO(){
-		Enumeration<?> liste = System.getProperties().propertyNames();  
-	    String cle;  
-	    while( liste.hasMoreElements() ) {  
-	        cle = (String)liste.nextElement();  
-	        System.out.println( cle + " = " + System.getProperty(cle) );  
-	    }   
+
+	public static void obterPropriedadesDoSO() {
+		Enumeration<?> liste = System.getProperties().propertyNames();
+		String cle;
+		while (liste.hasMoreElements()) {
+			cle = (String) liste.nextElement();
+			System.out.println(cle + " = " + System.getProperty(cle));
+		}
 	}
 
 	public static String filtraString(String nome, String delimitador) {
 		return nome.split(delimitador)[1];
 	}
 
-	public static void main(String[] args) {
-		try {
-			//obterPropriedadesDoSO();
-			System.out.println("Serial do HD: " + getHDSerial());
-			System.out.println("Serial da CPU: " + getCPUSerial());
-			System.out.println("Serial da Placa Mae: " + getMotherboardSerial());
-			
-			/* Total number of processors or cores available to the JVM */
-		    System.out.println("Available processors (cores): " + 
-		        Runtime.getRuntime().availableProcessors());
+	public static void getInfosInterfaces(Host host) throws SocketException {
+		Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+		host.setNetInterfaces(nets);
+	}
 
-		    /* Total amount of free memory available to the JVM */
-		    System.out.println("Free memory (bytes): " + 
-		        Runtime.getRuntime().freeMemory());
-		    
-		   /* OperatingSystemMXBean bean =
-		    		  (OperatingSystemMXBean)
-		    		    java.lang.management.ManagementFactory.getOperatingSystemMXBean();
-		    		long max = bean.getTotalPhysicalMemorySize();*/
-
-		    /* This will return Long.MAX_VALUE if there is no preset limit */
-		    long maxMemory = Runtime.getRuntime().maxMemory();
-		    /* Maximum amount of memory the JVM will attempt to use */
-		    System.out.println("Maximum memory (bytes): " + 
-		        (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory));
-
-		    /* Total memory currently available to the JVM */
-		    System.out.println("Total memory available to JVM (bytes): " + 
-		        Runtime.getRuntime().totalMemory());
-
-		    /* Get a list of all filesystem roots on this system */
-		    File[] roots = File.listRoots();
-
-		    /* For each filesystem root, print some info */
-		    for (File root : roots) {
-		      System.out.println("File system root: " + root.getAbsolutePath());
-		      System.out.println("Total space (bytes): " + root.getTotalSpace());
-		      System.out.println("Free space (bytes): " + root.getFreeSpace());
-		      System.out.println("Usable space (bytes): " + root.getUsableSpace());
-		    }
-		} catch (IOException e) {
+	public static void displayInterfaceInformation(NetworkInterface netint) {
+		try{
+			System.out.println("Display name: " + netint.getDisplayName());
+			System.out.println("Name: " + netint.getName());
+			// byte[] mac = netint.getHardwareAddress(); // a byte array containing the address (usually MAC) or null
+	
+			Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+			for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+				System.out.println("InetAddress: " + inetAddress);
+			}
+		}catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	public static void infoOSHI(Host host) throws Exception {
+		// So
+		host.setSo(si.getOperatingSystem().toString());
+		// Cpu
+		HardwareAbstractionLayer hal = si.getHardware();
+		host.setProcessors(hal.getProcessors().length);
+		List<String> processors = new ArrayList<String>();
+		for (oshi.hardware.Processor cpu : hal.getProcessors()) {
+			processors.add(cpu.toString());
+		}
+		host.setListProcessors(processors);
+		// hardware: memory
+		host.setMemoriaLivre(hal.getMemory().getAvailable());
+		host.setMemoriaTotal(hal.getMemory().getTotal());
+
+	}
+
+	public static double cpuLoad() {
+		double cpuLoad = -1;
+		try {
+			Class<?> beanClass = Thread.currentThread().getContextClassLoader().loadClass("com.sun.management.OperatingSystemMXBean");
+			Method method = beanClass.getMethod("getSystemCpuLoad");
+			cpuLoad = (Double) method.invoke(osBean);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cpuLoad;
+	}
+	
+	public static void networkInformation(Host host) {
+		InetAddress Ip;
+		try {
+			Ip = InetAddress.getLocalHost();
+			host.setHostAdress(Ip.getHostAddress());
+			host.setHostName(Ip.getCanonicalHostName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Carrega todas as informações em um objeto Host
+	 * @return
+	 */
+	public static Host loadAllInformation() {
+		Host host = new Host();
+		try {
+			infoOSHI(host);
+			// Arch
+			host.setArquitetura(osBean.getArch());
+			// CPU LOAD
+			host.setCpuLoad(cpuLoad());
+			// Serial
+			host.setHdSerial(getHDSerial());
+			host.setCpuSerial(getCPUSerial());
+			host.setMotherBoardSerial(getMotherboardSerial());
+			// Network
+			networkInformation(host);
+			getInfosInterfaces(host);
+			/* File System Roots */
+			host.setRoots(File.listRoots());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return host;
+	}
+	
+	/**
+	 * Imprime as informações de um host no console
+	 * @param host
+	 */
+	public static void printAllInformationHost(Host host) {
+		// S.O
+		System.out.println("S.O : " + host.getSo());
+		// Arch
+		System.out.println("Arquitetura : " + host.getArquitetura());
+		// CPU
+		System.out.println("CPU(s) :" + host.getProcessors());
+		for (String s : host.getListProcessors()) {
+			System.out.println("Vendor : " + s);
+		}
+		// CPU LOAD
+		System.out.println("CPU load : "+host.getCpuLoad());
+		// Memória
+		System.out.println("Memória : " + FormatUtil.formatBytes(host.getMemoriaLivre()) + "/" + FormatUtil.formatBytes(host.getMemoriaTotal()));
+		// Serial
+		System.out.println("Serial do HD : " + host.getHdSerial());
+		System.out.println("Serial da CPU : " + host.getCpuSerial());
+		System.out.println("Serial da Placa Mae : " + host.getMotherBoardSerial());
+		// Network
+		System.out.println("IP : " + host.getHostAdress());
+		System.out.println("HostName : " + host.getHostName());
+		System.out.println("Interfaces e endereços de rede :");
+		for (NetworkInterface netint : Collections.list(host.getNetInterfaces()))
+			displayInterfaceInformation(netint);
+		/* Percorrer File systems */
+		for (File root : host.getRoots()) {
+			System.out.println("File system root : " + root.getAbsolutePath());
+			System.out.println("Total space (bytes) : " + FormatUtil.formatBytes(root.getTotalSpace()));
+			System.out.println("Free space (bytes) : " + FormatUtil.formatBytes(root.getFreeSpace()));
+			System.out.println("Usable space (bytes) : " + FormatUtil.formatBytes(root.getUsableSpace()));
 		}
 
 	}
 
+	public static void main(String[] args) {
+		try {
+			printAllInformationHost(loadAllInformation());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 }
