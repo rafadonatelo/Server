@@ -1,19 +1,17 @@
 package com.server.scanner;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.lang.management.OperatingSystemMXBean;
+import java.util.Enumeration;
 
-public class SerialUtils {
+public class ScannerHost {
 
 	private final static String getHDSerial() throws IOException {
 		String os = System.getProperty("os.name");
-
 		try {
 			if (os.startsWith("Windows")) {
 				return getHDSerialWindows("C");
@@ -232,6 +230,15 @@ public class SerialUtils {
 
 		return filtraString(result, "serial: ");
 	}
+	
+	public static void obterPropriedadesDoSO(){
+		Enumeration<?> liste = System.getProperties().propertyNames();  
+	    String cle;  
+	    while( liste.hasMoreElements() ) {  
+	        cle = (String)liste.nextElement();  
+	        System.out.println( cle + " = " + System.getProperty(cle) );  
+	    }   
+	}
 
 	public static String filtraString(String nome, String delimitador) {
 		return nome.split(delimitador)[1];
@@ -239,10 +246,44 @@ public class SerialUtils {
 
 	public static void main(String[] args) {
 		try {
-			System.out.println(System.getProperties());
+			//obterPropriedadesDoSO();
 			System.out.println("Serial do HD: " + getHDSerial());
 			System.out.println("Serial da CPU: " + getCPUSerial());
 			System.out.println("Serial da Placa Mae: " + getMotherboardSerial());
+			
+			/* Total number of processors or cores available to the JVM */
+		    System.out.println("Available processors (cores): " + 
+		        Runtime.getRuntime().availableProcessors());
+
+		    /* Total amount of free memory available to the JVM */
+		    System.out.println("Free memory (bytes): " + 
+		        Runtime.getRuntime().freeMemory());
+		    
+		   /* OperatingSystemMXBean bean =
+		    		  (OperatingSystemMXBean)
+		    		    java.lang.management.ManagementFactory.getOperatingSystemMXBean();
+		    		long max = bean.getTotalPhysicalMemorySize();*/
+
+		    /* This will return Long.MAX_VALUE if there is no preset limit */
+		    long maxMemory = Runtime.getRuntime().maxMemory();
+		    /* Maximum amount of memory the JVM will attempt to use */
+		    System.out.println("Maximum memory (bytes): " + 
+		        (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory));
+
+		    /* Total memory currently available to the JVM */
+		    System.out.println("Total memory available to JVM (bytes): " + 
+		        Runtime.getRuntime().totalMemory());
+
+		    /* Get a list of all filesystem roots on this system */
+		    File[] roots = File.listRoots();
+
+		    /* For each filesystem root, print some info */
+		    for (File root : roots) {
+		      System.out.println("File system root: " + root.getAbsolutePath());
+		      System.out.println("Total space (bytes): " + root.getTotalSpace());
+		      System.out.println("Free space (bytes): " + root.getFreeSpace());
+		      System.out.println("Usable space (bytes): " + root.getUsableSpace());
+		    }
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
