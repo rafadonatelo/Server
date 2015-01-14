@@ -9,11 +9,28 @@
 <title>Acesso Remoto</title>
 </head>
 <body>
+	<p id="list1" onclick="openList1()">List of Items</p>
+	<ol id="ollist">
+		<li><a href="">List Item 1</a></li>
+		<li><a href="">List Item 2</a></li>
+		<li><a href="">List Item 3</a></li>
+		<li><a href="">List Item 4</a></li>
+		<li><a href="">List Item 5</a></li>
+	</ol>
 	<!-- <div id="text"
 		style="width: 200px; height: 200px; border: 1px solid gray;"></div> -->
 	<img id="remote" src="images/splash.png" />
 	<script>
 		initFileUpload();
+		function openList1() {
+		    var list = document.getElementById("ollist");
+
+		    if (list.style.display == "none"){
+		        list.style.display = "block";
+		    }else{
+		        list.style.display = "none";
+		    }
+		}
 	</script>
 </body>
 </html>
