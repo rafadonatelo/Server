@@ -3,18 +3,18 @@ package com.server.scanner;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
@@ -30,23 +30,21 @@ public class ScannerHost {
 
 	static SystemInfo si = new SystemInfo();
 
-	private final static String getHDSerial() throws IOException {
+	private final static String getHDSerial() {
 		String os = System.getProperty("os.name");
 		try {
 			if (os.startsWith("Windows")) {
 				return getHDSerialWindows("C");
 			} else if (os.startsWith("Linux")) {
 				return getHDSerialLinux();
-			} else {
-				throw new IOException("unknown operating system: " + os);
-			}
+			} 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			throw new IOException(ex.getMessage());
 		}
+		return os;
 	}
 
-	private final static String getCPUSerial() throws IOException {
+	private final static String getCPUSerial(){
 		String os = System.getProperty("os.name");
 
 		try {
@@ -54,16 +52,14 @@ public class ScannerHost {
 				return getCPUSerialWindows();
 			} else if (os.startsWith("Linux")) {
 				return getCPUSerialLinux();
-			} else {
-				throw new IOException("unknown operating system: " + os);
-			}
+			} 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			throw new IOException(ex.getMessage());
 		}
+		return os;
 	}
 
-	private final static String getMotherboardSerial() throws IOException {
+	private final static String getMotherboardSerial()  {
 		String os = System.getProperty("os.name");
 
 		try {
@@ -71,13 +67,11 @@ public class ScannerHost {
 				return getMotherboardSerialWindows();
 			} else if (os.startsWith("Linux")) {
 				return getMotherboardSerialLinux();
-			} else {
-				throw new IOException("unknown operating system: " + os);
-			}
+			} 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			throw new IOException(ex.getMessage());
 		}
+		return os;
 	}
 
 	// Implementacoes
@@ -264,41 +258,65 @@ public class ScannerHost {
 		return nome.split(delimitador)[1];
 	}
 
-	public static void getInfosInterfaces(Host host) throws SocketException {
-		Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-		host.setNetInterfaces(nets);
+	public static void getInfosInterfaces(Host host) {
+		try {
+			Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+			host.setNetInterfaces(nets);
+		} catch (Exception e) {
+			System.out.println("getInfosInterfaces");
+		}
 	}
 
 	public static void displayInterfaceInformation(NetworkInterface netint) {
-		try{
+		try {
 			System.out.println("Display name: " + netint.getDisplayName());
 			System.out.println("Name: " + netint.getName());
 			// byte[] mac = netint.getHardwareAddress(); // a byte array containing the address (usually MAC) or null
-	
+
 			Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
 			for (InetAddress inetAddress : Collections.list(inetAddresses)) {
 				System.out.println("InetAddress: " + inetAddress);
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void infoOSHI(Host host) throws Exception {
-		// So
-		host.setSo(si.getOperatingSystem().toString());
-		// Cpu
-		HardwareAbstractionLayer hal = si.getHardware();
-		host.setProcessors(hal.getProcessors().length);
-		List<String> processors = new ArrayList<String>();
-		for (oshi.hardware.Processor cpu : hal.getProcessors()) {
-			processors.add(cpu.toString());
-		}
-		host.setListProcessors(processors);
-		// hardware: memory
-		host.setMemoriaLivre(hal.getMemory().getAvailable());
-		host.setMemoriaTotal(hal.getMemory().getTotal());
+	public static String displayInterfaceInformationOnString(NetworkInterface netint) {
+		StringBuilder s = new StringBuilder();
+		try {
+			s.append("\nDisplay name: " + netint.getDisplayName());
+			s.append("\nName: " + netint.getName());
+			// byte[] mac = netint.getHardwareAddress(); // a byte array containing the address (usually MAC) or null
 
+			Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+			for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+				s.append("\nInetAddress: " + inetAddress);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return s.toString();
+	}
+
+	public static void infoOSHI(Host host) {
+		try {
+			// So
+			host.setSo(si.getOperatingSystem().toString());
+			// Cpu
+			HardwareAbstractionLayer hal = si.getHardware();
+			host.setProcessors(hal.getProcessors().length);
+			List<String> processors = new ArrayList<String>();
+			for (oshi.hardware.Processor cpu : hal.getProcessors()) {
+				processors.add(cpu.toString());
+			}
+			host.setListProcessors(processors);
+			// hardware: memory
+			host.setMemoriaLivre(hal.getMemory().getAvailable());
+			host.setMemoriaTotal(hal.getMemory().getTotal());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static double cpuLoad() {
@@ -312,7 +330,7 @@ public class ScannerHost {
 		}
 		return cpuLoad;
 	}
-	
+
 	public static void networkInformation(Host host) {
 		InetAddress Ip;
 		try {
@@ -330,27 +348,23 @@ public class ScannerHost {
 	 */
 	public static Host loadAllInformation() {
 		Host host = new Host();
-		try {
-			infoOSHI(host);
-			// Arch
-			host.setArquitetura(osBean.getArch());
-			// CPU LOAD
-			host.setCpuLoad(cpuLoad());
-			// Serial
-			host.setHdSerial(getHDSerial());
-			host.setCpuSerial(getCPUSerial());
-			host.setMotherBoardSerial(getMotherboardSerial());
-			// Network
-			networkInformation(host);
-			getInfosInterfaces(host);
-			/* File System Roots */
-			host.setRoots(File.listRoots());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		infoOSHI(host);
+		// Arch
+		host.setArquitetura(osBean.getArch());
+		// CPU LOAD
+		host.setCpuLoad(cpuLoad());
+		// Serial
+		host.setHdSerial(getHDSerial());
+		host.setCpuSerial(getCPUSerial());
+		host.setMotherBoardSerial(getMotherboardSerial());
+		// Network
+		networkInformation(host);
+		getInfosInterfaces(host);
+		/* File System Roots */
+		host.setRoots(File.listRoots());
 		return host;
 	}
-	
+
 	/**
 	 * Imprime as informações de um host no console
 	 * @param host
@@ -366,7 +380,7 @@ public class ScannerHost {
 			System.out.println("Vendor : " + s);
 		}
 		// CPU LOAD
-		System.out.println("CPU load : "+host.getCpuLoad());
+		System.out.println("CPU load : " + host.getCpuLoad());
 		// Memória
 		System.out.println("Memória : " + FormatUtil.formatBytes(host.getMemoriaLivre()) + "/" + FormatUtil.formatBytes(host.getMemoriaTotal()));
 		// Serial
@@ -389,10 +403,52 @@ public class ScannerHost {
 
 	}
 
+	/**
+	 * Imprime as informações de um host no JoptionPane
+	 * @param host
+	 */
+	public static String printAllInformationOnString(Host host) {
+		StringBuilder s = new StringBuilder();
+		s.append("\nS.O : " + host.getSo());
+		// Arch
+		s.append("\nArquitetura : " + host.getArquitetura());
+		// CPU
+		s.append("\nCPU(s) :" + host.getProcessors());
+		for (String s2 : host.getListProcessors()) {
+			s.append("\nVendor : " + s2);
+		}
+		// CPU LOAD
+		s.append("\nCPU load : " + host.getCpuLoad());
+		// Memória
+		s.append("\nMemória : " + FormatUtil.formatBytes(host.getMemoriaLivre()) + "/" + FormatUtil.formatBytes(host.getMemoriaTotal()));
+		// Serial
+		s.append("\nSerial do HD : " + host.getHdSerial());
+		s.append("\nSerial da CPU : " + host.getCpuSerial());
+		s.append("\nSerial da Placa Mae : " + host.getMotherBoardSerial());
+		// Network
+		s.append("\nIP : " + host.getHostAdress());
+		s.append("\nHostName : " + host.getHostName());
+		s.append("\nInterfaces e endereços de rede :");
+		/*for (NetworkInterface netint : Collections.list(host.getNetInterfaces()))
+			s.append(displayInterfaceInformationOnString(netint));*/
+		/* Percorrer File systems */
+		for (File root : host.getRoots()) {
+			s.append("\nFile system root : " + root.getAbsolutePath());
+			s.append("\nTotal space (bytes) : " + FormatUtil.formatBytes(root.getTotalSpace()));
+			s.append("\nFree space (bytes) : " + FormatUtil.formatBytes(root.getFreeSpace()));
+			s.append("\nUsable space (bytes) : " + FormatUtil.formatBytes(root.getUsableSpace()));
+		}
+		return s.toString();
+	}
+
 	public static void main(String[] args) {
 		try {
-			printAllInformationHost(loadAllInformation());
+			/*JOptionPane.showMessageDialog(null,"");
+			System.out.println(printAllInformationOnString(loadAllInformation()).toString());*/
+			JOptionPane.showMessageDialog(null, printAllInformationOnString(loadAllInformation()));
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, "Erro na captura");
 			e.printStackTrace();
 		}
 

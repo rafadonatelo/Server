@@ -99,7 +99,7 @@ function onMouseWheelImage(eve) {
  * sendMessage(["keypress"]); }
  */
 function onOpenWebSocket() {
-	browser.addEventListener("mousemove", onMouseMoveBrowser, false);
+	remote.addEventListener("mousemove", onMouseMoveBrowser, false);
 	remote.addEventListener("mousedown", onMouseDownImage, false);
 	remote.addEventListener("mouseup", onMouseUpImage, false);
 	remote.addEventListener("mousewheel", onMouseWheelImage, false);

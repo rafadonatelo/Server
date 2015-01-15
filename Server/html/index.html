@@ -6,31 +6,31 @@
 <script src="file_download.js" type="text/javascript"></script>
 <script src="file_upload.js" type="text/javascript"></script>
 <script src="base64.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="css/main.css" type="text/css" />
+<link rel="stylesheet" href="css/jquery-ui.css" type="text/css" />
+
+<!-- JS LIBRARIES-->
+<script src="jquery/jquery-1.4.2.js" type="text/javascript"></script>
+
 <title>Acesso Remoto</title>
 </head>
 <body>
-	<p id="list1" onclick="openList1()">List of Items</p>
-	<ol id="ollist">
-		<li><a href="">List Item 1</a></li>
-		<li><a href="">List Item 2</a></li>
-		<li><a href="">List Item 3</a></li>
-		<li><a href="">List Item 4</a></li>
-		<li><a href="">List Item 5</a></li>
-	</ol>
-	<!-- <div id="text"
-		style="width: 200px; height: 200px; border: 1px solid gray;"></div> -->
-	<img id="remote" src="images/splash.png" />
+	<div id="toolbar" class="toolbar"
+		style="border-top-style: none; left: 15%; visibility: visible;width:70%;height:15px">
+		
+		<div id="toolbarHandle"
+			style="top: 28px; left: left: 100%; visibility: visible;"></div>
+	</div>
+	
+	<div class="responsive" style="max-width: 100%;width: 100%;	height: auto;">
+ 		<img id="remote"
+ 		 style="max-width: 100%; width: 100%; height: auto; " alt="Iniciando acesso remoto..."/>
+ 	</div>
+	
 	<script>
 		initFileUpload();
-		function openList1() {
-		    var list = document.getElementById("ollist");
-
-		    if (list.style.display == "none"){
-		        list.style.display = "block";
-		    }else{
-		        list.style.display = "none";
-		    }
-		}
 	</script>
+	
 </body>
 </html>

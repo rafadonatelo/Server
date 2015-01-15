@@ -17,6 +17,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
 
+import javax.swing.JOptionPane;
+
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -26,6 +28,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.websocket.WebSocket.Connection;
 import org.kyotogtug.vnc.events.Event;
 import org.kyotogtug.vnc.events.FileUploadEvent;
+
+import com.server.scanner.ScannerHost;
 
 public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 
@@ -50,9 +54,18 @@ public class WebSocketRemote implements OnMessageObserver, OnCaptureObserver {
 				System.exit(0);
 			}
 		});
+		
+		MenuItem quitMenuItem2 = new MenuItem("Scanner Host");
+		quitMenuItem2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, ScannerHost.printAllInformationOnString(ScannerHost.loadAllInformation()));
+			}
+		});
 
 		PopupMenu popupMenu = new PopupMenu();
 		popupMenu.add(quitMenuItem);
+		popupMenu.add(quitMenuItem2);
 
 		URL imageUrl = this.getClass().getClassLoader().getResource("images/icon.png");
 		TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().createImage(imageUrl));
