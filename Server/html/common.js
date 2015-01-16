@@ -99,7 +99,7 @@ function onMouseWheelImage(eve) {
  * sendMessage(["keypress"]); }
  */
 function onOpenWebSocket() {
-	remote.addEventListener("mousemove", onMouseMoveBrowser, false);
+	browser.addEventListener("mousemove", onMouseMoveBrowser, false);
 	remote.addEventListener("mousedown", onMouseDownImage, false);
 	remote.addEventListener("mouseup", onMouseUpImage, false);
 	remote.addEventListener("mousewheel", onMouseWheelImage, false);
@@ -185,3 +185,5 @@ function initial(eve) {
 	browser.addEventListener("contextmenu", onContextMenuBrowser, true);
 }
 window.addEventListener("load", initial, false);
+
+

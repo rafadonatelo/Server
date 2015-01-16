@@ -7,30 +7,47 @@
 <script src="file_upload.js" type="text/javascript"></script>
 <script src="base64.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="css/main.css" type="text/css" />
-<link rel="stylesheet" href="css/jquery-ui.css" type="text/css" />
 
 <!-- JS LIBRARIES-->
 <script src="jquery/jquery-1.4.2.js" type="text/javascript"></script>
 
 <title>Acesso Remoto</title>
 </head>
-<body>
+<body style="background: #000">
 	<div id="toolbar" class="toolbar"
-		style="border-top-style: none; left: 15%; visibility: visible;width:70%;height:15px">
-		
+		style="border-top-style: none;width:70%; left: 560.5px; visibility: visible;">
+		<!-- <ul id="dropdown" style="left: 442.413180828095px; display: block;">
+			<li><a href="#" id="ctrl-alt-del">Ctrl+Alt+Del</a></li>
+			<li><a href="#" id="ctrl-esc">Ctrl+Esc</a></li>
+			<li><a href="#" id="help-btn">Help</a></li>
+		</ul>
 		<div id="toolbarHandle"
-			style="top: 28px; left: left: 100%; visibility: visible;"></div>
+			style="top: 28px; left: 601px; visibility: visible;"></div>
+		<div id="mouse" class="btn icon mouse pressed"
+			title="Enables mouse and keyboard control.">Control</div>
+		<div id="state" class="btn icon pause" title="Pause">pause</div>
+		<div id="refresh" class="btn icon refresh"
+			title="Request a full display update.">Refresh</div>
+		<div id="scale" class="btn icon scale pressed"
+			title="Scale the display to fit in the current window.">Scale</div>
+		<div id="colors" class="btn icon colors" title="Changes color depth.">256
+			COLOR</div>
+		<div id="monitor" class="btn icon monitor hidden"
+			title="Next Monitor.">Monitor</div>
+		<div id="clipbrd" class="btn icon clipbrd"
+			title="Shows the clipboard window.">Clipboard</div>
+		<div id="help" class="btn icon keyboard pressed" title="Help">Keyboard</div>
+		<div id="disconnect" class="btn icon disconnect"
+			title="Scale the display to fit in the current window.">Disconnect</div> -->
 	</div>
-	
-	<div class="responsive" style="max-width: 100%;width: 100%;	height: auto;">
- 		<img id="remote"
- 		 style="max-width: 100%; width: 100%; height: auto; " alt="Iniciando acesso remoto..."/>
- 	</div>
-	
+
+	<img id="remote" src="images/splash.png"
+		alt="Iniciando acesso remoto..." />
+
+
 	<script>
 		initFileUpload();
 	</script>
-	
+
 </body>
 </html>
