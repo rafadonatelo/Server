@@ -7,17 +7,15 @@ function initFileUpload() {
 
 function onDragOver(ev) {
 	console.log('onDragOver');
-	ev.stopPropagation();
-    ev.preventDefault();
+	ev.preventDefault();
     ev.dataTransfer.dropEffect = 'copy';
 }
 
 function onDrop(ev) {
 	console.log('onDrop');
-	// ev.stopPropagation();
+	ev.preventDefault();
 	var dt = ev.dataTransfer;
 	var files = dt.files;
-	ev.preventDefault();
 	if (files.length > 0) {
 		var file = files[0];
 		var reader = new FileReader();

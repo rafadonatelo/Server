@@ -24,6 +24,10 @@ function setImageRequestTimer(milliseconds) {
 
 function onKeyDownImage(eve) {
 	console.log(eve.keyCode); 
+	if (eve.keyCode === 8) {
+		console.log('prevent default');
+		eve.preventDefault();
+	}
 	sendMessage([ "keydown", eve.keyCode ]);
 }
 
@@ -33,9 +37,9 @@ function onKeyUpImage(eve) {
 }
 
 function onKeyPressImage(eve) {
-	//console.log(eve);
-	//event.preventDefault();
-	//sendMessage([ "keypress", eve.keyCode ]);
+	// console.log(eve);
+	// event.preventDefault();
+	// sendMessage([ "keypress", eve.keyCode ]);
 }
 
 function onMouseMoveBrowser(eve) {
@@ -91,6 +95,7 @@ function onMouseWheelImage(eve) {
 	eve.preventDefault();
 	sendMessage([ "mousewheel", eve.wheelDelta ]);
 }
+
 /*
  * function onKeyDownImage(eve){ console.log(eve.keyCode); //
  * sendMessage(["keydown"]); } function onKeyUpImage(eve){

@@ -75,7 +75,7 @@ class Capture extends Thread {
 
 				//long endTime = new Date().getTime();
 				//System.out.println(Math.max(Math.min((endTime-startTime)*2,1000),100));
-				sleep(150);
+				sleep(50);
 
 			}
 		} catch (AWTException e) {

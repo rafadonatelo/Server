@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.swing.filechooser.FileSystemView;
+
 import org.apache.commons.codec.binary.Base64;
 
 public class FileUploadEvent extends Event {
@@ -35,7 +37,8 @@ public class FileUploadEvent extends Event {
         FileOutputStream fout = null;
         try {
         	System.out.println(fileName);
-            fout = new FileOutputStream("c:/"+fileName);
+        	System.out.println(System.getProperty("user.dir"));
+            fout = new FileOutputStream(FileSystemView.getFileSystemView().getRoots()[0]+"/"+fileName);
             fout.write(data);
    
         } catch (FileNotFoundException e) {
@@ -53,6 +56,9 @@ public class FileUploadEvent extends Event {
                 }
             }
         }
+    }
+    public static void main(String args[]){
+    	System.out.println(FileSystemView.getFileSystemView().getRoots()[0]);
     }
 
 }
