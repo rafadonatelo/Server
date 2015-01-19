@@ -1,0 +1,82 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Chat</title>
+</head>
+<body>
+    <h2>File Upload</h2>
+    Select file
+    <input type="file" id="filename" />
+    <br>
+    <input type="button" value="Connect" onclick="connectChatServer()" />
+    <br>
+    <input type="button" value="Upload" onclick="sendFile()" />
+    <script>
+        var ws;
+
+        function connectChatServer() {
+            ws = new WebSocket(
+                    "ws://localhost:40320/ws/");
+
+            ws.binaryType = "arraybuffer";
+            ws.onopen = function() {
+                alert("Connected.")
+            };
+
+            ws.onmessage = function(evt) {
+                alert(evt.msg);
+            };
+
+            ws.onclose = function() {
+                alert("Connection is closed...");
+            };
+            ws.onerror = function(e) {
+                alert(e.msg);
+            }
+
+        }
+
+
+        function sendFile() {
+            var file = document.getElementById('filename').files[0];
+            ws.send('filename:'+file.name);
+            var reader = new FileReader();
+            var rawData = new ArrayBuffer();            
+
+            var fStart = 0; //start byte
+            var fEnd = 1024*1024; //packet size & end byte when slicing file.
+            var fileFrag; //file fragment                       
+
+            reader.loadend = function() {           
+                console.log('load end');
+            }
+
+            reader.onload = function(e) {
+                if(e.target.readyState == FileReader.DONE) {
+                    rawData = e.target.result;              
+                    //var blob = new Blob([rawData]);           
+                    ws.send(rawData);   
+                }               
+            }
+
+            fileFrag = file.slice(fStart, fEnd);
+            reader.readAsArrayBuffer(fileFrag);         
+
+            objRun = setInterval(function() {               
+                if (ws.bufferedAmount == 0) {                   
+                    if(reader.readyState == FileReader.DONE) {                      
+                        if(fStart<file.size) {                          
+                            fStart = fEnd + 1;
+                            fEnd = fStart + 1024*1024;
+                            fileFrag = file.slice(fStart, fEnd);
+                            console.log('fileFrag Size: ' + fileFrag.size + 'Frag End: ' + fEnd);
+                            reader.readAsArrayBuffer(fileFrag); 
+                        } else clearInterval(objRun);
+                    } //end of readyState
+                } //end of ws.buffer
+            }, 5);//end of setInterval      
+        }//end of sendFile()    
+
+    </script>
+</body>
+</html>
