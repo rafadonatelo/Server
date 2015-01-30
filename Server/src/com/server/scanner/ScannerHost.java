@@ -429,8 +429,8 @@ public class ScannerHost {
 		s.append("\nIP : " + host.getHostAdress());
 		s.append("\nHostName : " + host.getHostName());
 		s.append("\nInterfaces e endereços de rede :");
-		/*for (NetworkInterface netint : Collections.list(host.getNetInterfaces()))
-			s.append(displayInterfaceInformationOnString(netint));*/
+		for (NetworkInterface netint : Collections.list(host.getNetInterfaces()))
+			s.append(displayInterfaceInformationOnString(netint));
 		/* Percorrer File systems */
 		for (File root : host.getRoots()) {
 			s.append("\nFile system root : " + root.getAbsolutePath());
@@ -445,7 +445,7 @@ public class ScannerHost {
 		try {
 			/*JOptionPane.showMessageDialog(null,"");
 			System.out.println(printAllInformationOnString(loadAllInformation()).toString());*/
-			JOptionPane.showMessageDialog(null, printAllInformationOnString(loadAllInformation()));
+			System.out.println(printAllInformationOnString(loadAllInformation()));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Erro na captura");
