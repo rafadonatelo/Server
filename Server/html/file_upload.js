@@ -8,7 +8,7 @@ function initFileUpload() {
 function onDragOver(ev) {
 	console.log('onDragOver');
 	ev.preventDefault();
-    ev.dataTransfer.dropEffect = 'copy';
+	ev.dataTransfer.dropEffect = 'copy';
 }
 
 function onDrop(ev) {
@@ -24,7 +24,8 @@ function onDrop(ev) {
 		};
 		reader.onloadend = function() {
 			var content = reader.result;
-			sendMessage2('FILE_UPLOAD', 1, [file.name, base64encode(content)].join('|'));
+			sendMessage2('FILE_UPLOAD', 1, [ file.name, base64encode(content) ]
+					.join('|'));
 			alert('Upload efetuado com sucesso!');
 		};
 		reader.readAsBinaryString(file);
